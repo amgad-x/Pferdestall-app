@@ -1,0 +1,88 @@
+{% extends 'stall/base.html' %}
+{% load static %}
+
+{% block content %}
+<h2>Pferd hinzufügen</h2>
+
+<form method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+
+  <!-- Pferd-Felder -->
+  <div class="form-group-row">
+    <label for="id_name">Name:</label>
+    {{ form.name }}
+  </div>
+
+  <div class="form-group-row">
+    <label for="id_transponder_id">Transponder-ID:</label>
+    {{ form.transponder_id }}
+  </div>
+
+  <div class="form-group-row">
+    <label for="id_paddock_nummer">Paddock Nummer:</label>
+    {{ form.paddock_nummer }}
+  </div>
+
+  <div class="form-group-row">
+    <label for="id_bild">Bild:</label>
+    {{ form.bild }}
+  </div>
+
+  <hr>
+  <h4>Fütterungs-Intervalle</h4>
+
+  {{ formset.management_form }}
+
+  <div id="formset-area">
+    {% for form in formset %}
+      <div class="formset-form row mb-2">
+        <div class="col-md-5">
+          {{ form.start_zeit.label_tag }} {{ form.start_zeit }}
+        </div>
+        <div class="col-md-5">
+          {{ form.end_zeit.label_tag }} {{ form.end_zeit }}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Unsichtbare Vorlage -->
+  <div id="empty-form-template" class="d-none">
+    <div class="formset-form row mb-2">
+      <div class="col-md-5">
+        <label for="id_fuetterung_set-__prefix__-start_zeit">Start zeit:</label>
+        <input type="time" name="fuetterung_set-__prefix__-start_zeit" class="form-control" id="id_fuetterung_set-__prefix__-start_zeit">
+      </div>
+      <div class="col-md-5">
+        <label for="id_fuetterung_set-__prefix__-end_zeit">End zeit:</label>
+        <input type="time" name="fuetterung_set-__prefix__-end_zeit" class="form-control" id="id_fuetterung_set-__prefix__-end_zeit">
+      </div>
+    </div>
+  </div>
+
+  <button type="button" id="add-form-btn" class="btn btn-outline-primary mb-3">+ neues Intervall</button>
+
+  <!-- Speichern + Abbrechen -->
+  <div class="mb-3">
+    <button type="submit" class="btn btn-success">Speichern</button>
+    <a href="{% url 'pferd_liste' %}" class="btn btn-secondary">Abbrechen</a>
+  </div>
+</form>
+
+<!-- JS -->
+<script>
+  const addButton = document.getElementById('add-form-btn');
+  const formArea = document.getElementById('formset-area');
+  const totalFormsInput = document.getElementById('id_fuetterung_set-TOTAL_FORMS');
+  const emptyFormTemplate = document.getElementById('empty-form-template').innerHTML;
+
+  addButton.addEventListener('click', function () {
+    const formCount = parseInt(totalFormsInput.value);
+    const newFormHTML = emptyFormTemplate.replace(/__prefix__/g, formCount);
+    const newFormElement = document.createElement('div');
+    newFormElement.innerHTML = newFormHTML;
+    formArea.appendChild(newFormElement);
+    totalFormsInput.value = formCount + 1;
+  });
+</script>
+{% endblock %}

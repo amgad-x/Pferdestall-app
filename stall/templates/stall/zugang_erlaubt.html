@@ -1,0 +1,7 @@
+{% extends 'stall/base.html' %}
+
+{% block content %}
+    <div class="alert alert-success">
+        Zugang erlaubt für: <strong>{{ pferd.name }}</strong> (ID: {{ pferd.transponder_id }})
+    </div>
+{% endblock %}

@@ -1,0 +1,137 @@
+{% extends 'stall/base.html' %}
+{% load static %}
+
+{% block content %}
+<h2>{{ pferd.name }} bearbeiten</h2>
+
+<form method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+  
+  <!-- Pferd-Felder -->
+  {{ form.non_field_errors }}
+  <div class="form-group-row">
+      <label for="id_name">Name:</label>
+      {{ form.name }}
+  </div>
+  <div class="form-group-row">
+      <label for="id_transponder_id">Transponder-ID:</label>
+      {{ form.transponder_id }}
+  </div>
+  <div class="form-group-row">
+      <label for="id_paddock_nummer">Paddock Nummer:</label>
+      {{ form.paddock_nummer }}
+  </div>
+  <div class="form-group-row">
+      <label for="id_bild">Bild:</label>
+      {{ form.bild }}
+  </div>
+
+  <hr>
+  <h4>Fütterungs-Intervalle</h4>
+
+  {{ formset.management_form }}
+
+  <div id="formset-area">
+    {% for form in formset %}
+      <div class="formset-form row mb-3">
+        <div class="col-md-4">
+          {{ form.start_zeit.label_tag }} {{ form.start_zeit }}
+        </div>
+        <div class="col-md-4">
+          {{ form.end_zeit.label_tag }} {{ form.end_zeit }}
+        </div>
+        <div class="col-md-4 d-flex align-items-center">
+          {% if form.can_delete %}
+            <label>{{ form.DELETE }} 🗑 Löschen</label>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- JS-Vorlage für neue Formulare -->
+  <div id="empty-form-template" class="d-none">
+    <div class="formset-form row mb-3">
+      <div class="col-md-4">
+        <label for="id_fuetterung_set-__prefix__-start_zeit">Start zeit:</label>
+        <input type="time" name="fuetterung_set-__prefix__-start_zeit" class="form-control"
+               id="id_fuetterung_set-__prefix__-start_zeit" />
+      </div>
+      <div class="col-md-4">
+        <label for="id_fuetterung_set-__prefix__-end_zeit">End zeit:</label>
+        <input type="time" name="fuetterung_set-__prefix__-end_zeit" class="form-control"
+               id="id_fuetterung_set-__prefix__-end_zeit" />
+      </div>
+      <div class="col-md-4 d-flex align-items-center gap-2">
+        <!-- Verstecktes DELETE-Feld -->
+        <input type="checkbox" name="fuetterung_set-__prefix__-DELETE"
+               id="id_fuetterung_set-__prefix__-DELETE" style="display:none;" />
+        <button type="button" class="btn btn-outline-danger btn-sm remove-btn">🗑 Entfernen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Button zum Hinzufügen -->
+  <button type="button" id="add-form-btn" class="btn btn-outline-primary mb-3">+ neues Intervall</button>
+
+  <!-- Submit & Zurück -->
+  <div class="mb-3">
+    <button type="submit" class="btn btn-success">💾 Speichern</button>
+    <a href="{% url 'pferd_liste' %}" class="btn btn-secondary">Zurück</a>
+  </div>
+</form>
+
+<!-- JS -->
+<script>
+  const addButton = document.getElementById('add-form-btn');
+  const formArea = document.getElementById('formset-area');
+  const totalFormsInput = document.getElementById('id_fuetterung_set-TOTAL_FORMS');
+  const emptyFormTemplate = document.getElementById('empty-form-template').innerHTML;
+
+  addButton.addEventListener('click', function () {
+    const formCount = parseInt(totalFormsInput.value);
+    const newFormHTML = emptyFormTemplate.replace(/__prefix__/g, formCount);
+    const newFormElement = document.createElement('div');
+    newFormElement.innerHTML = newFormHTML;
+
+    // Lösch-Button-Logik für neu hinzugefügte Formulare
+    const removeBtn = newFormElement.querySelector('.remove-btn');
+    const deleteCheckbox = newFormElement.querySelector(`input[name="fuetterung_set-${formCount}-DELETE"]`);
+
+    removeBtn.addEventListener('click', function () {
+      deleteCheckbox.checked = true;
+      newFormElement.style.display = 'none';  // visuell entfernen
+    });
+
+    formArea.appendChild(newFormElement);
+    totalFormsInput.value = formCount + 1;
+  });
+</script>
+
+<!-- CSS -->
+<style>
+  .form-group-row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 12px;
+    max-width: 600px;
+  }
+
+  .form-group-row label {
+    font-weight: 500;
+  }
+
+  .formset-form input {
+    width: 100%;
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  .remove-btn {
+    margin-left: 10px;
+  }
+</style>
+{% endblock %}

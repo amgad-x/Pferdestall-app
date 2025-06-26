@@ -1,0 +1,32 @@
+{% extends 'stall/base.html' %}
+
+{% block content %}
+    <h2>{{ pferd.name }} – Details</h2>
+    <p><strong>ID:</strong> {{ pferd.transponder_id }}</p>
+    <p><strong>Paddock:</strong> {{ pferd.paddock_nummer }}</p>
+
+    {% if pferd.bild %}
+        <img src="{{ pferd.bild.url }}" alt="Pferd" class="img-fluid mb-3" style="max-width: 300px;">
+    {% endif %}
+
+    <h4>Fütterungszeiten:</h4>
+    {% if fuetterungen %}
+        <ul>
+            {% for f in fuetterungen %}
+                <li>{{ f.start_zeit|time:"H:i" }} – {{ f.end_zeit|time:"H:i" }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Keine Fütterungszeiten gespeichert.</p>
+    {% endif %}
+
+    <h4>Letzte 4 Zutritte:</h4>
+    <ul class="list-group">
+        {% for eintrag in zutritte %}
+            <li class="list-group-item">{{ eintrag.zeit }}</li>
+        {% empty %}
+            <li class="list-group-item">Keine Zutritte gefunden.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+

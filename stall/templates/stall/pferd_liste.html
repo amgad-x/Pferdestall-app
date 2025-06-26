@@ -1,0 +1,22 @@
+{% extends 'stall/base.html' %}
+
+{% block content %}
+    <h2>Pferdeliste</h2>
+    <form method="GET" class="mb-3">
+        <input type="text" name="suche" class="form-control" placeholder="Nach Name oder ID suchen">
+    </form>
+    <ul class="list-group">
+        {% for pferd in pferde %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                {{ pferd.name }} (ID: {{ pferd.transponder_id }})
+                <div>
+                    <a href="{% url 'pferd_details' pferd.pk %}" class="btn btn-sm btn-info">Details</a>
+                    <a href="{% url 'pferd_bearbeiten' pferd.pk %}" class="btn btn-sm btn-warning">Bearbeiten</a>
+                    <a href="{% url 'pferd_loeschen' pferd.pk %}" class="btn btn-sm btn-danger">Löschen</a>
+                </div>
+            </li>
+        {% empty %}
+            <li class="list-group-item">Keine Pferde gefunden.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
