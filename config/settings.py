@@ -27,7 +27,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['pferdestall-app.onrender.com', 'localhost', '127.0.0.1']
+
 
 
 
@@ -134,7 +134,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-ALLOWED_HOSTS = ['192.168.178.30', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['pferdestall-app.onrender.com', 'localhost', '127.0.0.1']
 
 
 
